@@ -109,9 +109,5 @@ venv.bak/
 # vscode
 .vscode/
 
-# db_init
-pt/db_init.py
-
 # DB
 db/
-
