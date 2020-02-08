@@ -3,6 +3,7 @@ import secrets
 
 from werkzeug.security import generate_password_hash
 
+from endpoints.user.model import User
 
 ############
 #   User   #
@@ -10,5 +11,7 @@ from werkzeug.security import generate_password_hash
 user = {
     "account": "test",
     "password": generate_password_hash("test"),
-    "tag": secrets.token_hex(),
+    "token": secrets.token_hex(),
 }
+
+User.add(User(**user))

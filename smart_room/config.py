@@ -1,16 +1,20 @@
 import os
+from dotenv import load_dotenv
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
+
+load_dotenv()
 
 class Config:
     """Parent configuration class."""
 
     DEBUG = False
     CSRF_ENABLED = True
-    # SQLALCHEMY_TRACK_MODIFICATIONS = False
-    # SQLALCHEMY_DATABASE_URI = os.environ.get(
-    #     "DB_URL", "postgresql://postgres:12345678@localhost:5432/udc"
-    # )
-
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        "DB_URL", "postgresql://postgres:12345678@localhost:5432/postgres"
+    )
     CAPTURE_PATH = os.environ.get("CAPTURE_PATH")
 
 
@@ -38,3 +42,12 @@ APP_CONFIG = {
     "staging": StagingConfig,
     "production": ProductionConfig,
 }
+
+# pylint: disable=C0103
+app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+    "DB_URL", "postgresql://postgres:123456789@localhost:5432/smart_room"
+)
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db = SQLAlchemy(app)
+# pylint: enable=C0103
