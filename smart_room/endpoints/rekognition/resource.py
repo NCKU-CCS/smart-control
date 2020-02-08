@@ -39,7 +39,7 @@ class RekognitionResource(Resource):
         data = {
             "image": os.path.basename(photo),
             "people_count": people_count,
-            "rekognition_data": labels,
+            "rekognition_data": str(labels),
         }
         Rekognition.add(Rekognition(**data))
         return people_count

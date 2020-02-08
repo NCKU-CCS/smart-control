@@ -5,7 +5,7 @@ from werkzeug.exceptions import HTTPException
 from werkzeug.exceptions import default_exceptions
 from dotenv import load_dotenv
 
-# from config import db
+from config import db
 from config import APP_CONFIG
 from endpoints import RESOURCES
 
@@ -53,7 +53,7 @@ def create_app(config_mode):
     # pylint: enable=E1101
 
     # DB Init
-    # db.init_app(app)
+    db.init_app(app)
 
     # Route Init
     api = Api(app)

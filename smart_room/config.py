@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv()
 
+
 class Config:
     """Parent configuration class."""
 

@@ -20,6 +20,7 @@ logging.basicConfig(
 
 
 REKOGNITION_URL = os.environ.get("REKOGNITION_URL", "http://localhost:5000/rekognition")
+TOKEN = os.environ.get("TOKEN")
 
 
 class MotionDetect:
@@ -48,7 +49,9 @@ class MotionDetect:
 
                 if counter_motion >= 3:
                     # Calculate People
-                    message = requests.get(REKOGNITION_URL).json()
+                    message = requests.get(
+                        REKOGNITION_URL, headers={"Authorization": f"Bearer {TOKEN}"}
+                    ).json()
                     logging.info(f"[Rekognition Result]\n{message}\n")
                     # Reset Counter
                     counter_motion = 0

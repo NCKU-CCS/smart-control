@@ -22,4 +22,4 @@ def verify_token(token):
 
 @auth.error_handler
 def unauthorized():
-    return jsonify({"error": g.error_message}), 401
+    return jsonify({"error": "Unauthorized access"}), 401
