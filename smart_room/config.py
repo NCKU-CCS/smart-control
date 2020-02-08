@@ -12,7 +12,6 @@ class Config:
     # )
 
     CAPTURE_PATH = os.environ.get("CAPTURE_PATH")
-    # "device_connection": {"write": f"{DEVICE_HOST}/device.connection.write"},
 
 
 class DevelopmentConfig(Config):
