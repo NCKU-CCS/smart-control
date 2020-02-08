@@ -4,6 +4,8 @@
 
 ## API
 
+透過 Bearer Token 進行身份認證。
+
 ### GET /rekognition
 
 將觸發執行 AWS Rekognition，並記錄照片中的人數。
