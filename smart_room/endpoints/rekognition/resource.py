@@ -40,6 +40,7 @@ class RekognitionResource(Resource):
             "image": os.path.basename(photo),
             "people_count": people_count,
             "rekognition_data": str(labels),
+            "user_id": g.uuid,
         }
         Rekognition.add(Rekognition(**data))
         return people_count

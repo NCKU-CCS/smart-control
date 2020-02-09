@@ -13,5 +13,10 @@ user = {
     "password": generate_password_hash("test"),
     "token": secrets.token_hex(),
 }
-
+pi = {
+    "account": "pi",
+    "password": generate_password_hash("test"),
+    "token": secrets.token_hex(),
+}
 User.add(User(**user))
+User.add(User(**pi))

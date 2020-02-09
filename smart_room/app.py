@@ -5,8 +5,8 @@ from werkzeug.exceptions import HTTPException
 from werkzeug.exceptions import default_exceptions
 from dotenv import load_dotenv
 
-from config import db
 from config import APP_CONFIG
+from config import db, scheduler
 from endpoints import RESOURCES
 
 load_dotenv()
@@ -55,9 +55,15 @@ def create_app(config_mode):
     # DB Init
     db.init_app(app)
 
+    # Scheduler Init
+    scheduler.init_app(app)
+    scheduler.start()
+
     # Route Init
     api = Api(app)
     api.add_resource(RESOURCES["rekognition"], "/rekognition")
+    api.add_resource(RESOURCES["aircon"], "/aircon")
+    api.add_resource(RESOURCES["schedule"], "/schedule")
 
     return app
 
