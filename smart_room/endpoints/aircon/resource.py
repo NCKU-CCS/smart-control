@@ -72,7 +72,7 @@ class AirconScheduleResource(Resource):
             type=lambda x: datetime.strptime(x, "%Y-%m-%d %H:%M:%S"),
             required=True,
             location="json",
-            help="Put Aircon Schedule: 'time' is required",
+            help="Aircon Schedule: 'time' is required",
         )
         self.common_parser.add_argument(
             "action",
@@ -84,7 +84,7 @@ class AirconScheduleResource(Resource):
             else False,
             required=True,
             location="json",
-            help="Put Aircon Schedule: 'action' is required",
+            help="Aircon Schedule: 'action' is required",
         )
 
     def _set_post_parser(self):
