@@ -1,4 +1,5 @@
 import os.path
+import time
 import glob
 
 from flask import jsonify, current_app as app
@@ -25,6 +26,9 @@ class RekognitionResource(Resource):
 
     def rekognition(self):
         # Catch the newest picture
+        # Prevent when old picture has been delete but new picture haven't save.
+        while(not glob.glob(app.config["CAPTURE_PATH"])):
+            time.sleep(1)
         photo = glob.glob(app.config["CAPTURE_PATH"])[0]
         labels = self.detect_labels_local_file(photo)
         people_count = 0
