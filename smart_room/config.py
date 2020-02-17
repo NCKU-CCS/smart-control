@@ -46,10 +46,5 @@ APP_CONFIG = {
 }
 
 # pylint: disable=C0103
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-    "DB_URL", "postgresql://postgres:123456789@localhost:5432/smart_room"
-)
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 # pylint: enable=C0103

@@ -35,7 +35,8 @@ class RekognitionResource(Resource):
             len(label["Instances"])
             for label in labels["Labels"]
             if label["Name"] == "Person"
-        ][0]
+        ]
+        people_count = people_count[0] if people_count else 0
         logging.info(
             f"[AWS Rekognition Result]\nImage:{os.path.basename(photo)}\nPeople Count:{people_count}\n"
         )
