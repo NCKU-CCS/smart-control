@@ -27,11 +27,11 @@ class RekognitionResource(Resource):
         # Catch the newest picture
         photo = glob.glob(app.config["CAPTURE_PATH"])[0]
         labels = self.detect_labels_local_file(photo)
-        people_count = 0
-        for label in labels["Labels"]:
-            if label["Name"] == "Person":
-                people_count = len(label["Instances"])
-                break
+        people_count = [
+            len(label["Instances"])
+            for label in labels["Labels"]
+            if label["Name"] == "Person"
+        ][0]
         logging.info(
             f"[AWS Rekognition Result]\nImage:{os.path.basename(photo)}\nPeople Count:{people_count}\n"
         )
