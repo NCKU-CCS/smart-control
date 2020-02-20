@@ -18,7 +18,6 @@ class UUID2STR(types.TypeDecorator):
 
 class SmartRoomBaseMixin:
     uuid = db.Column(
-        # UUID(as_uuid=True),
         UUID2STR,
         primary_key=True,
         unique=True,
@@ -32,11 +31,8 @@ class SmartRoomBaseMixin:
         db.session.add(self)
         db.session.commit()
 
-    # pylint: disable=R0201
     def update(self):
         db.session.commit()
-
-    # pylint: enable=R0201
 
     def delete(self):
         db.session.delete(self)

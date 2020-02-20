@@ -5,14 +5,13 @@ import time
 from flask import jsonify, current_app as app
 from flask_restful import Resource
 import boto3
-
 from loguru import logger
+
 from utils.oauth import auth, g
 from .model import Rekognition
 
 
 class RekognitionResource(Resource):
-    # pylint: disable=R0201
     @auth.login_required
     def get(self):
         logger.info(
@@ -21,8 +20,6 @@ class RekognitionResource(Resource):
         people_count = self.rekognition()
         response = jsonify({"people_count": people_count})
         return response
-
-    # pylint: enable=R0201
 
     def rekognition(self):
         # Catch the newest picture
@@ -50,12 +47,9 @@ class RekognitionResource(Resource):
         Rekognition.add(Rekognition(**data))
         return people_count
 
-    # pylint: disable=R0201
     def detect_labels_local_file(self, photo):
         # Rekognition API
         client = boto3.client("rekognition")
         with open(photo, "rb") as image:
             response = client.detect_labels(Image={"Bytes": image.read()})
         return response
-
-    # pylint: enable=R0201
