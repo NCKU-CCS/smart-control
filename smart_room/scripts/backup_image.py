@@ -1,18 +1,12 @@
 import os
 import datetime
-import logging
 
 from synology_api import filestation
+from loguru import logger
 from dotenv import load_dotenv
 
 
 load_dotenv()
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="[%(levelname)s] - %(asctime)s\n%(message)s\n" + ("-" * 70),
-    datefmt="%Y-%m-%dT%H:%M:%S",
-)
 
 
 URL = os.environ.get("URL", "localhost")
@@ -24,12 +18,13 @@ NAS_PATH = os.environ.get("NAS_PATH", "/image")
 
 def get_file_name(path):
     yesterday = datetime.date.today() - datetime.timedelta(days=1)
-    file_path = os.path.join(path, yesterday.strftime("%Y-%m-%d"))
-    return file_path
+    file_name = yesterday.strftime("%Y-%m-%d")
+    file_path = os.path.join(path, file_name)
+    return file_name, file_path
 
-def compress_folder(folder):
+def compress_folder(folder, folder_name):
     compress_file = folder + '.tar'
-    cmd = f"tar cvf {compress_file} {folder}"
+    cmd = f"tar -C {IMAGE_PATH} -cvf {compress_file} {folder_name}"
     returned_value = os.system(cmd)
     if returned_value == 0:
         return compress_file
@@ -37,13 +32,13 @@ def compress_folder(folder):
 
 def main():
     # Get folder name
-    folder_path = get_file_name(IMAGE_PATH)
+    folder_name, folder_path = get_file_name(IMAGE_PATH)
     # Compress folder
-    compressed_file = compress_folder(folder_path)
+    compressed_file = compress_folder(folder_path, folder_name)
     # Upload file
     uploader = filestation.FileStation(URL, PORT, USER, PASSWORD)
     response = uploader.upload_file(dest_path=NAS_PATH, file_path=compressed_file, overwrite='False')
-    logging.info(f"[Upload Response] {response}")
+    logger.info(f"[Upload Response] {response}")
 
 
 if __name__ == "__main__":
