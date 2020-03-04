@@ -1,13 +1,26 @@
 #!/bin/bash
 
+# Capture Path
+# This can be change to anywhere you want
+CAPTURE_PATH=$(pwd)/../capture
+
+# Name for save folder
 DATE=$(date +"%Y-%m-%d")
 
+# Name for new image
 DATED=$(date +"%Y-%m-%d_%T")
 
-sudo rm /home/pi/smart/capture/*.jpg
+# Get old image
+OLD_IMAGE=$(find $CAPTURE_PATH -maxdepth 1 -name "*.jpg")
 
-sudo raspistill -o /home/pi/smart/capture/$DATED.jpg -n
+# Capture image
+sudo raspistill -o $CAPTURE_PATH/$DATED.jpg -n
 
-mkdir -p /home/pi/smart/capture/$DATE
+# Remove old image
+rm -f $OLD_IMAGE
 
-jpegoptim --size=1024k --dest=/home/pi/smart/capture/$DATE /home/pi/smart/capture/$DATED.jpg
+# Create folder if not exist
+mkdir -p $CAPTURE_PATH/$DATE
+
+# Compress image to 1MB and save in folders
+jpegoptim --size=1024k --dest=$CAPTURE_PATH/$DATE $CAPTURE_PATH/$DATED.jpg
