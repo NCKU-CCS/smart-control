@@ -111,3 +111,6 @@ venv.bak/
 
 # DB
 db/
+
+# Images
+capture/

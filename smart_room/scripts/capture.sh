@@ -5,7 +5,7 @@
 CAPTURE_PATH=$(pwd)/../capture
 
 # Name for save folder
-DATE=$(date +"%Y-%m-%d")
+DATE=$(date +"%Y-%m-%d_%p")
 
 # Name for new image
 DATED=$(date +"%Y-%m-%d_%T")

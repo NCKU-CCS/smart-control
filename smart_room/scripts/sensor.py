@@ -1,22 +1,14 @@
-#!/usr/bin/python
-
 import os
 import time
 
-import logging
 import requests
+from loguru import logger
 
 from dotenv import load_dotenv
 import RPi.GPIO as GPIO
 
 
 load_dotenv()
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="[%(levelname)s] - %(asctime)s\n%(message)s\n" + ("-" * 70),
-    datefmt="%Y-%m-%dT%H:%M:%S",
-)
 
 
 REKOGNITION_URL = os.environ.get("REKOGNITION_URL", "http://localhost:5000/rekognition")
@@ -36,14 +28,14 @@ class MotionDetect:
             while True:
                 # Detected if pir is high
                 if GPIO.input(self.pir) == True:
-                    logging.info("Motion Detected!")
+                    logger.info("Motion Detected!")
                     counter_motion += 1
                     counter_nobody = 0
                 else:
-                    logging.info("Nobody...")
+                    logger.info("Nobody...")
                     counter_motion = 0
                     counter_nobody += 1
-                logging.info(
+                logger.info(
                     f"Detect count: {counter_motion}\nNobody count: {counter_nobody}"
                 )
 
@@ -52,7 +44,7 @@ class MotionDetect:
                     message = requests.get(
                         REKOGNITION_URL, headers={"Authorization": f"Bearer {TOKEN}"}
                     ).json()
-                    logging.info(f"[Rekognition Result]\n{message}\n")
+                    logger.info(f"[Rekognition Result]\n{message}\n")
                     # Reset Counter
                     counter_motion = 0
                     counter_nobody = 0
@@ -70,7 +62,7 @@ class MotionDetect:
         finally:
             # reset all GPIO
             GPIO.cleanup()
-            logging.info("Program ended")
+            logger.info("Program ended")
 
 
 def main():
@@ -80,11 +72,11 @@ def main():
     GPIO.setmode(GPIO.BOARD)
     # Setup GPIO pin PIR as input
     GPIO.setup(pir, GPIO.IN)
-    logging.info(f"PIR Sensor initializing on pin {pir}")
+    logger.info(f"PIR Sensor initializing on pin {pir}")
     # Start up sensor
     time.sleep(2)
-    logging.info("Active")
-    logging.info("Press Ctrl+c to end program")
+    logger.info("Active")
+    logger.info("Press Ctrl+c to end program")
     MotionDetect(pir)
 
 
