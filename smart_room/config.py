@@ -46,5 +46,7 @@ APP_CONFIG = {
 }
 
 # pylint: disable=C0103
+# scheduler
+scheduler = APScheduler()
 db = SQLAlchemy()
 # pylint: enable=C0103
