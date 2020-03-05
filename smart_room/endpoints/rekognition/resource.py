@@ -1,12 +1,11 @@
 import os.path
 import time
 import glob
-import time
 
 from flask import jsonify, current_app as app
 from flask_restful import Resource
-import boto3
 from loguru import logger
+import boto3
 
 from utils.oauth import auth, g
 from .model import Rekognition
