@@ -1,5 +1,6 @@
 import os
 import time
+import json
 
 import requests
 from loguru import logger
@@ -116,20 +117,35 @@ class FileStation:
 
         args = {"path": dest_path, "create_parents": "true", "overwrite": "true"}
 
-        response = requests.get(
-            url,
-            data=args,
-            files={
-                "file": (filename, open(file_path, "rb"), "application/octet-stream")
-            },
-        )
-
-        if response.status_code == 200 and response.json()["success"]:
-            logger.success(
-                f"[upload_file] Success!\nfile: {file_path}\nupload dir: {dest_path}"
+        try:
+            response = requests.get(
+                url,
+                data=args,
+                files={
+                    "file": (filename, open(file_path, "rb"), "application/octet-stream")
+                },
             )
-            return True
+
+            if response.json()["success"]:
+                logger.success(
+                    f"[upload_file] Success!\nfile: {file_path}\nupload dir: {dest_path}"
+                )
+                return True
+
+        except requests.exceptions.Timeout:
+            logger.error("[upload_file] FileStation Upload API request timeout.")
+
+        except requests.exceptions.TooManyRedirects:
+            logger.error("[upload_file] FileStation Upload API too many redirects.")
+
+        except requests.exceptions.RequestException as err:
+            logger.error(err)
+
+        except json.decoder.JSONDecodeError:
+            logger.error("[upload_file] FileStation Upload API JSON decode error.")
+
         logger.error(
             f"[upload_file] Faild\nfile: {file_path}\nResponse: {response.text}"
         )
+
         return False
