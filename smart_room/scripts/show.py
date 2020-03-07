@@ -6,7 +6,8 @@ import json
 from loguru import logger
 import requests
 from datetime import datetime, timedelta
-from tkinter import Tk, Frame, Label, Canvas
+from tkinter import Tk, Frame, Label, Canvas, Toplevel, Button, StringVar, Entry
+from tkinter.ttk import Notebook, Combobox
 import tkinter.font as tkFont
 
 import RPi.GPIO as GPIO
@@ -39,6 +40,9 @@ class MotionDetect:
         self.indoor_temperature = 0
         self.indoor_humidity = 0
         self.indoor_luminance = 0
+        self.indoor_di_c = 0
+        self.indoor_di_f = 0
+        self.indoor_di_cond = ""
         self.hue_light = "off"
         self.nobody_counter = 0
         self.rek_people = 0
@@ -46,7 +50,30 @@ class MotionDetect:
         self.photo = ""
         self.bridge = Bridge(BRIDGE_IP)
         self.bridge.connect()
+        # GUI
         self.tk_root = Tk()
+        self.notebook = Notebook()
+        # Information frame
+        self.information_frame = None
+        self.label_temperature = None
+        self.label_humidity = None
+        self.label_luminance = None
+        self.label_di = None
+        self.label_hue_light = None
+        self.label_aircon = None
+        self.label_nobody_counter = None
+        self.label_time = None
+        self.ncku_img = None
+        self.netdb_img = None
+        self.canvas = None
+        self.img = None
+        self.label_rek_people = None
+        self.label_rek_time = None
+        # Schedule frame
+        self.schedule_frame = None
+        # DR frame
+        self.dr_frame = None
+        # GUI Init
         self.gui_init()
         self.detect()
         self.tk_root.mainloop()
@@ -54,9 +81,16 @@ class MotionDetect:
     def gui_init(self):
         self.tk_root.title("Smart Control")
         # Create Frames
-        frm_status = Frame(self.tk_root)
+        self.information_init()
+        self.schedule_init()
+        self.dr_init()
+
+    def information_init(self):
+        # Information Frame
+        self.information_frame = Frame()
+        frm_status = Frame(self.information_frame)
         frm_status.pack(side="left")
-        frm_image = Frame(self.tk_root)
+        frm_image = Frame(self.information_frame)
         frm_image.pack(side="right")
         # Insert Labels into Status Frame
         head_font = tkFont.Font(family="Lucida Grande", size=30)
@@ -75,6 +109,10 @@ class MotionDetect:
             frm_status, text="Luminance: ", anchor="nw", font=font_style, width=30
         )
         self.label_luminance.pack()
+        self.label_di = Label(
+            frm_status, text="DI: ", anchor="nw", font=font_style, width=30
+        )
+        self.label_di.pack()
         # Controller
         self.label_hue_light = Label(
             frm_status, text="Light Bar: off", anchor="nw", font=font_style, width=30
@@ -121,6 +159,18 @@ class MotionDetect:
             frm_image, text="Recognition Time: ", anchor="nw", font=font_style, width=30
         )
         self.label_rek_time.pack()
+        self.notebook.add(self.information_frame, text="Information")
+        self.notebook.pack()
+
+    def schedule_init(self):
+        self.schedule_frame = Frame()
+        self.notebook.add(self.schedule_frame, text="Schedule")
+        self.notebook.pack()
+
+    def dr_init(self):
+        self.dr_frame = Frame()
+        self.notebook.add(self.dr_frame, text="Demand Response")
+        self.notebook.pack()
 
     def detect(self):
         # Calculate numbers of motion
@@ -170,15 +220,23 @@ class MotionDetect:
                 self.label_luminance.config(
                     text=f"Luminance: {format(self.indoor_luminance, '.1f')} lux"
                 )
-                self.indoor_humidity, self.indoor_temperature = Adafruit_DHT.read_retry(
+                dht_humidity, dht_temperature = Adafruit_DHT.read(
                     Adafruit_DHT.AM2302, 27
                 )
+                if dht_humidity and dht_temperature:
+                    self.indoor_humidity, self.indoor_temperature = (
+                        dht_humidity,
+                        dht_temperature,
+                    )
+                    self.calculate_di()
+                    self.generate_condition()
                 self.label_humidity.config(
                     text=f"Humidity: {format(self.indoor_humidity, '.1f')} %"
                 )
                 self.label_temperature.config(
                     text=f"Temperature: {format(self.indoor_temperature, '.1f')} °C"
                 )
+                self.label_di.config(text=f"DI: {format(self.indoor_di_c, '.1f')} °C, {self.indoor_di_cond}")
                 self.label_hue_light.config(text=f"Light Bar: {self.hue_light}")
                 # update datas
                 if self.nobody_counter == 0:
@@ -259,6 +317,29 @@ class MotionDetect:
             self.img = ImageTk.PhotoImage(Image.open(photo_path[0]).resize((500, 300)))
             self.photo = photo_path[0]
         self.canvas.create_image(0, 0, anchor="nw", image=self.img)
+
+    def calculate_di(self):
+        temperature_fahrenheit = self.indoor_temperature * 1.8 + 32
+        self.indoor_di_f = temperature_fahrenheit - 0.55 * (
+            1 - self.indoor_luminance / 100
+        ) * (temperature_fahrenheit - 58)
+        self.indoor_di_c = self.fahrenheit_to_celsius(self.indoor_di_f)
+
+    @staticmethod
+    def fahrenheit_to_celsius(fahrenheit):
+        return (fahrenheit - 32) / 1.8
+
+    def generate_condition(self):
+        if self.indoor_di_f <= 70:
+            self.indoor_di_cond = "Comfortable"
+        elif 70 < self.indoor_di_f <= 75:
+            self.indoor_di_cond = "Slightly Warm"
+        elif 75 < self.indoor_di_f <= 80:
+            self.indoor_di_cond = "Warm"
+        elif 80 < self.indoor_di_f <= 85:
+            self.indoor_di_cond = "Hot"
+        elif self.indoor_di_f > 85:
+            self.indoor_di_cond = "Very Hot"
 
     def bytes_to_number(self, data):
         # Simple function to convert 2 bytes of data

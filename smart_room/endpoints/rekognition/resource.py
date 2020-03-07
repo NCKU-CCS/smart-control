@@ -47,7 +47,8 @@ class RekognitionResource(Resource):
         Rekognition.add(Rekognition(**data))
         return people_count
 
-    def detect_labels_local_file(self, photo):
+    @staticmethod
+    def detect_labels_local_file(photo):
         # Rekognition API
         client = boto3.client("rekognition")
         with open(photo, "rb") as image:
