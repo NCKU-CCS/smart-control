@@ -2,7 +2,6 @@ import os
 
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
-from flask_apscheduler import APScheduler
 
 load_dotenv()
 
@@ -46,7 +45,5 @@ APP_CONFIG = {
 }
 
 # pylint: disable=C0103
-# scheduler
-scheduler = APScheduler()
 db = SQLAlchemy()
 # pylint: enable=C0103
