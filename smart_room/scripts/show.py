@@ -236,7 +236,9 @@ class MotionDetect:
                 self.label_temperature.config(
                     text=f"Temperature: {format(self.indoor_temperature, '.1f')} °C"
                 )
-                self.label_di.config(text=f"DI: {format(self.indoor_di_c, '.1f')} °C, {self.indoor_di_cond}")
+                self.label_di.config(
+                    text=f"DI: {format(self.indoor_di_c, '.1f')} °C, {self.indoor_di_cond}"
+                )
                 self.label_hue_light.config(text=f"Light Bar: {self.hue_light}")
                 # update datas
                 if self.nobody_counter == 0:
