@@ -16,7 +16,6 @@ class Config:
         "DB_URL", "postgresql://postgres:12345678@localhost:5432/postgres"
     )
     CAPTURE_PATH = os.environ.get("CAPTURE_PATH")
-    SCHEDULER_API_ENABLED = True
 
 
 class DevelopmentConfig(Config):
