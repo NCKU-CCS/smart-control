@@ -122,7 +122,11 @@ class FileStation:
                 url,
                 data=args,
                 files={
-                    "file": (filename, open(file_path, "rb"), "application/octet-stream")
+                    "file": (
+                        filename,
+                        open(file_path, "rb"),
+                        "application/octet-stream",
+                    )
                 },
             )
 
