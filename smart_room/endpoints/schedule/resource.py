@@ -4,14 +4,30 @@ import uuid
 from flask import jsonify, make_response, current_app as app
 from flask_restful import Resource, reqparse
 from loguru import logger
+from phue import Bridge
 
 from utils.oauth import auth, g
 
 from ..aircon.resource import control_aircon
 
 
+BRIDGE_IP = "10.0.0.16"
+bridge = Bridge(BRIDGE_IP)
+bridge.connect()
+
 def control_light(device, command):
+    if device == "light_front":
+        device_id = 1
+    elif device == "light_back":
+        device_id = 2
     logger.info(f"[Light Control]\nDevice: {device}\tAction: {command}")
+    if command == 0 or command == "off":
+        bridge.set_light(device_id, "on", False)
+    elif command.isdigit():
+        bridge.set_light(device_id, "on", True)
+        bridge.set_light(device_id, "hue", 41442)
+        bridge.set_light(device_id, "sat", 0)
+        bridge.set_light(device_id, "bri", int(int(command) * 255 / 100))
 
 
 class ScheduleResource(Resource):
@@ -35,10 +51,15 @@ class ScheduleResource(Resource):
     def _set_post_parser(self):
         def action_type(value):
             try:
-                if not value["light_1"].isdigit() and not 0 <= int(value["light_1"]) <= 100:
-                    raise ValueError("Incorrect light_1 format, must between 0~100")
+                if not value["light_front"].isdigit() and not 0 <= int(value["light_front"]) <= 100:
+                    raise ValueError("Incorrect light_front format, must between 0~100")
             except KeyError:
-                raise ValueError("Missing light_1 setting")
+                raise ValueError("Missing light_front setting")
+            try:
+                if not value["light_back"].isdigit() and not 0 <= int(value["light_front"]) <= 100:
+                    raise ValueError("Incorrect light_back format, must between 0~100")
+            except KeyError:
+                raise ValueError("Missing light_front setting")
             aircon_filter = (
                 lambda x: x
                 if str(x[:-1]).isdigit()
@@ -129,7 +150,8 @@ class ScheduleResource(Resource):
         args = self.post_parser.parse_args()
 
         job_types = {
-            "light_1": control_light,
+            "light_front": control_light,
+            "light_back": control_light,
             "aircon_front": control_aircon,
             "aircon_back": control_aircon,
         }

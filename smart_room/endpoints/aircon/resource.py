@@ -25,7 +25,19 @@ class AirconResource(Resource):
     def _set_post_parser(self):
         self.post_parser = reqparse.RequestParser()
         self.post_parser.add_argument(
-            "action",
+            "action_front",
+            type=lambda x: x
+            if str(x[:-1]).isdigit()
+            and 16 <= int(x[:-1]) <= 30
+            and x[-1] == "c"
+            or x == "off"
+            else False,
+            required=True,
+            location="json",
+            help="Post Aircon : 'action' is required",
+        )
+        self.post_parser.add_argument(
+            "action_back",
             type=lambda x: x
             if str(x[:-1]).isdigit()
             and 16 <= int(x[:-1]) <= 30
@@ -42,12 +54,12 @@ class AirconResource(Resource):
         logger.info(f"[Post Aircon Request]\nUser Account:{g.account}\nUUID:{g.uuid}\n")
         # Add new schedule
         args = self.post_parser.parse_args()
-        if args["action"]:
+        if args["action_front"]:
             # Execute
-            returned_value = control_aircon(1, args["action"])
+            returned_value = control_aircon(1, args["action_front"])
             # Save to database
             record = {
-                "action": args["action"],
+                "action": args["action_front"],
                 "time": datetime.now().astimezone(pytz.utc),
                 "user_id": g.uuid,
             }

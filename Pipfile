@@ -19,6 +19,7 @@ marshmallow-sqlalchemy = "==0.19.0"
 psycopg2-binary = "==2.8.4"
 flask-apscheduler = "==1.11.0"
 loguru = "==0.4.1"
+phue = "==1.1"
 
 [packages]
 requests = "==2.22.0"
@@ -35,6 +36,7 @@ psycopg2-binary = "==2.8.4"
 flask-apscheduler = "==1.11.0"
 pillow = "==7.0.0"
 loguru = "==0.4.1"
+phue = "==1.1"
 
 [requires]
 python_version = "3.6"
