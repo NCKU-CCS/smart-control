@@ -68,7 +68,7 @@ class AirconResource(Resource):
                 "action_back": args["action_back"],
                 "user_id": g.uuid,
             }
-            Aircon.add(Aircon(**record))
+            Aircon(**record).add()
             if returned_bool == 0:
                 return jsonify({"status": "success"})
         return make_response(jsonify({"status": "fail"}), 400)

@@ -44,7 +44,7 @@ class RekognitionResource(Resource):
             "rekognition_data": str(labels),
             "user_id": g.uuid,
         }
-        Rekognition.add(Rekognition(**data))
+        Rekognition(**data).add()
         return people_count
 
     @staticmethod
