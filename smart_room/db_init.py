@@ -18,5 +18,5 @@ pi = {
     "password": generate_password_hash("test"),
     "token": secrets.token_hex(),
 }
-User.add(User(**user))
-User.add(User(**pi))
+User(**user).add()
+User(**pi).add()
