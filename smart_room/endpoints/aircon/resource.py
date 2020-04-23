@@ -5,21 +5,20 @@ from flask_restful import Resource, reqparse
 from loguru import logger
 
 from utils.oauth import auth, g
-
 from .model import Aircon
 
 
 def control_aircon(command_front, command_back):
-    returned_bool = True
+    success = True
     for index, command in enumerate(command_front, command_back):
         cmd = f"irsend SEND_ONCE aircon {command}"
         returned = os.system(cmd)
         if returned != 0:
-            returned_bool = False
+            success = False
             logger.error(f"[control_aircon] {index} set to {command} Fail!")
         else:
             logger.success(f"[control_aircon] {index} set to {command} Success!")
-    return returned_bool
+    return success
 
 
 class AirconResource(Resource):
@@ -69,6 +68,8 @@ class AirconResource(Resource):
                 "user_id": g.uuid,
             }
             Aircon(**record).add()
-            if returned_bool == 0:
+            if returned_bool is True:
+                logger.success("A/C Control Success")
                 return jsonify({"status": "success"})
+            logger.error("A/C Control Faild")
         return make_response(jsonify({"status": "fail"}), 400)
