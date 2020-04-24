@@ -32,6 +32,15 @@ class LightControlResource(Resource):
         )
 
     def control_light(self, command_front, command_back):
+        """sned light control signal
+
+        Arguments:
+            command_front {int} -- perccentage of brightness
+            command_back {int} -- perccentage of brightness
+
+        Returns:
+            list -- action set
+        """
         logger.info(f"Light Control: {command_front}%, {command_back}%")
         action_set = []
         for index, command in enumerate((command_front, command_back)):
