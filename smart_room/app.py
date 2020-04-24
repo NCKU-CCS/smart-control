@@ -6,8 +6,7 @@ from werkzeug.exceptions import HTTPException
 from werkzeug.exceptions import default_exceptions
 from dotenv import load_dotenv
 
-from config import db
-from config import APP_CONFIG
+from config import APP_CONFIG, db
 from endpoints import RESOURCES
 
 load_dotenv()
@@ -59,6 +58,7 @@ def create_app(config_mode):
     # Route Init
     api = Api(app)
     api.add_resource(RESOURCES["rekognition"], "/rekognition")
+    api.add_resource(RESOURCES["aircon"], "/aircon")
 
     return app
 
