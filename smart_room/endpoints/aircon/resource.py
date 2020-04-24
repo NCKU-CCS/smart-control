@@ -60,6 +60,6 @@ class AirconResource(Resource):
         Aircon(**record).add()
         if returned_bool:
             logger.success("A/C Control Success")
-            return jsonify({"status": "success"})
+            return jsonify({"success": True})
         logger.error("A/C Control Faild")
-        return make_response(jsonify({"status": "fail"}), 400)
+        return make_response(jsonify({"success": False}), 400)
