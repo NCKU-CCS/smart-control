@@ -58,7 +58,7 @@ class AirconResource(Resource):
             "user_id": g.uuid,
         }
         Aircon(**record).add()
-        if returned_bool is True:
+        if returned_bool:
             logger.success("A/C Control Success")
             return jsonify({"status": "success"})
         logger.error("A/C Control Faild")
