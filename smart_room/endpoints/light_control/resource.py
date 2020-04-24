@@ -40,7 +40,7 @@ class LightControlResource(Resource):
                 self.bridge.set_light(device_id, "on", False)
                 action_set.append(False)
             else:
-                brightness = int(int(command) * 254 / 100)
+                brightness = round(int(command) * 254 / 100)
                 self.bridge.set_light(device_id, "on", True)
                 self.bridge.set_light(device_id, "hue", 41442)
                 self.bridge.set_light(device_id, "sat", 0)
@@ -65,7 +65,7 @@ class LightControlResource(Resource):
         logger.info(f"[Get Aircon Request]\nUser Account:{g.account}\nUUID:{g.uuid}\n")
         light_status = self.get_light_status()
         response = {
-            "status": {"light_front": light_status[0], "light_back": light_status[1]},
+            "status": {"light_front": round(light_status[0]*100/254), "light_back": round(light_status[1]*100/254)},
         }
         return jsonify(response)
 
@@ -85,7 +85,7 @@ class LightControlResource(Resource):
         # Get lights' status
         light_status = self.get_light_status()
         response = {
-            "status": {"light_front": light_status[0], "light_back": light_status[1]},
+            "status": {"light_front": round(light_status[0]*100/254), "light_back": round(light_status[1]*100/254)},
         }
         # Check success or not
         if action_set == light_status:
