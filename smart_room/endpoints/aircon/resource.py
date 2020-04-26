@@ -8,20 +8,6 @@ from utils.oauth import auth, g
 from .model import Aircon
 
 
-def control_aircon(command_front, command_back):
-    success = True
-    # Future work: switch between front and back A/C
-    for index, command in enumerate((command_front, command_back)):
-        cmd = f"irsend SEND_ONCE aircon {command}"
-        returned = os.system(cmd)
-        if returned != 0:
-            success = False
-            logger.error(f"[control_aircon] {index} set to {command} Fail!")
-        else:
-            logger.success(f"[control_aircon] {index} set to {command} Success!")
-    return success
-
-
 class AirconResource(Resource):
     def __init__(self):
         self._set_post_parser()
@@ -43,6 +29,29 @@ class AirconResource(Resource):
             help="Post Aircon : 'action_back' need to set between 16c to 30c or off",
         )
 
+    @staticmethod
+    def control_aircon(command_front, command_back):
+        """send A/C control signal
+
+        Arguments:
+            command_front {string} -- 16c ~ 31c or off
+            command_back {string} -- 16c ~ 31c or off
+
+        Returns:
+            Bool -- exec success(True) or fail(False)
+        """
+        success = True
+        # Future work: switch between front and back A/C
+        for index, command in enumerate((command_front, command_back)):
+            cmd = f"irsend SEND_ONCE aircon {command}"
+            returned = os.system(cmd)
+            if returned != 0:
+                success = False
+                logger.error(f"[control_aircon] {index} set to {command} Fail!")
+            else:
+                logger.success(f"[control_aircon] {index} set to {command} Success!")
+        return success
+
     @auth.login_required
     def post(self):
         logger.info(
@@ -50,7 +59,7 @@ class AirconResource(Resource):
         )
         args = self.post_parser.parse_args()
         # Execute
-        returned_bool = control_aircon(args["action_front"], args["action_back"])
+        returned_bool = self.control_aircon(args["action_front"], args["action_back"])
         # Save to database
         record = {
             "action_front": args["action_front"],
@@ -60,6 +69,6 @@ class AirconResource(Resource):
         Aircon(**record).add()
         if returned_bool:
             logger.success("A/C Control Success")
-            return jsonify({"status": "success"})
+            return jsonify({"success": True})
         logger.error("A/C Control Faild")
-        return make_response(jsonify({"status": "fail"}), 400)
+        return make_response(jsonify({"success": False}), 400)

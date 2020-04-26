@@ -59,6 +59,7 @@ def create_app(config_mode):
     api = Api(app)
     api.add_resource(RESOURCES["rekognition"], "/rekognition")
     api.add_resource(RESOURCES["aircon"], "/aircon")
+    api.add_resource(RESOURCES["light_control"], "/lightcontrol")
 
     return app
 

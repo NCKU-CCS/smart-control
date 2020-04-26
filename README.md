@@ -48,6 +48,50 @@ pipenv run python smart_room/app.py
 
         + 關機：`off`
 
+### GET /lightcontrol
+
+取得電燈狀態(亮度百分比)
+
++ Response
+
+    + `status`
+
+        + `light_front`: 第一個電燈的狀態
+
+        + `light_back`: 第二個電燈的狀態
+
+
+### POST /lightcontrol
+
+控制電燈
+亮度使用百分比即可進行設定
+
++ 參數
+
+    + `action_front`：第一個電燈的設定值
+
+        + 設定量度：數字
+        接受範圍：`0 ~ 100` (%)
+
+        + 關閉：`0`
+
+    + `action_back`：第二個電燈的設定值
+
+        + 設定量度：數字
+        接受範圍：`0 ~ 100` (%)
+
+        + 關閉：`0`
+
++ Response
+
+    + `status`
+
+        + `light_front`: 第一個電燈的狀態
+
+        + `light_back`: 第二個電燈的狀態
+
+    + `success`: 控制成功(`True`)或失敗(`False`)
+
 ## Scripts
 
 ### [sensor.py](./smart_room/scripts/sensor.py)
